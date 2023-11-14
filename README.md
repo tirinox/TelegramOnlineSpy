@@ -50,7 +50,7 @@ Create bot in your telegram client (write a message to @BotFather) and copy bot 
   Write /help to your bot to see usage information.
 
 ```
-/start - start online monitoring 
+/monitor - start online monitoring 
 /stop - stop online monitoring 
 /help - show help 
 /add - add user to monitoring list "/add +79991234567 UserName"

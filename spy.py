@@ -1,3 +1,4 @@
+import asyncio
 import collections
 import os
 from datetime import datetime
@@ -15,17 +16,16 @@ API_ID = int(os.environ['API_ID'])
 BOT_TOKEN = os.environ['BOT_TOKEN']
 
 client = TelegramClient('data_thief', API_ID, API_HASH)
-bot = TelegramClient('bot', API_ID, API_HASH).start(bot_token=BOT_TOKEN)
+client.start()
 
+bot = TelegramClient('bot', API_ID, API_HASH)
 
-async def main():
-    await client.connect()
-    client.start()
-    print('running')
+bot = bot.start(bot_token=BOT_TOKEN)
 
+print('running')
 
 HELP_MESSAGES = [
-    '/start - start online monitoring ',
+    '/monitor - start online monitoring ',
     '/stop - stop online monitoring ',
     '/help - show help ',
     '/add - add user to monitoring list "/add +79991234567 UserName"',
@@ -114,14 +114,14 @@ async def clearData(event):
     await event.respond('Data has been cleared')
 
 
-@bot.on(events.NewMessage(pattern='^/start$'))
-async def start(event):
+@bot.on(events.NewMessage(pattern='^/monitor$'))
+async def monitor_command(event):
     message = event.message
     id = message.chat_id
     if id not in data:
         data[id] = {}
     user_data = data[id]
-    if ('is_running' in user_data and user_data['is_running']):
+    if 'is_running' in user_data and user_data['is_running']:
         await event.respond('Spy is already started')
         return
 
@@ -182,7 +182,7 @@ async def start(event):
                 await event.respond(f'{get_interval(was_online)}: {contact.name} went offline.')
                 contact.last_offline = None
         delay = 5
-        if ('delay' in user_data):
+        if 'delay' in user_data:
             delay = user_data['delay']
         sleep(delay)
     user_data['is_running'] = False
@@ -224,7 +224,7 @@ async def remove(event):
         user_data['contacts'] = []
     contacts = user_data['contacts']
 
-    if (len(contacts) > index):
+    if len(contacts) > index:
         del contacts[index]
         await event.respond(f'User №{index} has been deleted')
     else:
@@ -232,7 +232,7 @@ async def remove(event):
 
 
 @bot.on(events.NewMessage(pattern='^/setdelay'))
-async def setDelay(event):
+async def set_delay(event):
     message = event.message
     person_info = message.message.split()
     print(person_info)
@@ -258,7 +258,7 @@ async def disconnect(event):
 
 
 @bot.on(events.NewMessage(pattern='/list'))
-async def list(event):
+async def list_command(event):
     message = event.message
     id = message.chat_id
     if id not in data:
@@ -269,13 +269,13 @@ async def list(event):
         user_data['contacts'] = []
     contacts = user_data['contacts']
     response = 'List is empty'
-    if (len(contacts)):
+    if len(contacts):
         response = 'User list: \n' + '\n'.join([str(x) for x in contacts])
     await event.respond(response)
 
 
 @bot.on(events.NewMessage(pattern='/getall'))
-async def getAll(event):
+async def get_all_command(event):
     response = ''
     for key, value in data.items():
         response += f'{key}:\n'
@@ -288,9 +288,10 @@ async def getAll(event):
     await event.respond(response)
 
 
-def main():
+async def main():
     """Start the bot."""
-    bot.run_until_disconnected()
+    await client.connect()
+    await bot.run_until_disconnected()
 
 
 def utc2localtime(utc):
