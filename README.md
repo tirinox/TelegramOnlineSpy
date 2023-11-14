@@ -28,11 +28,11 @@
 
 Create your telegramm application on https://my.telegram.org/apps and replace API_HASH, API_ID with yours.
 
+Create `.env` file in the same directory as `spy.py` and fill it with your data.
 ```
-API_HASH = 'your api hash'
-API_ID = 'yuor api id'
-BOT_TOKEN = "your bot token"
-USER_NAME = "your user name"
+API_HASH="your api hash"
+API_ID=1223
+BOT_TOKEN="your bot token"
 ```
 
 Create bot in your telegram client (write a message to @BotFather) and copy bot token into app.
@@ -67,7 +67,7 @@ Create bot in your telegram client (write a message to @BotFather) and copy bot 
 
 ---
 
-### Crontjob
+### Cronjob
 
 Handy cronjob makros
 
